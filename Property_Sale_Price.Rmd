@@ -1,0 +1,84 @@
+---
+title: "Multiple Linear Model for Property Sale Price"
+author: "Zipeng Liu"
+output: 
+  prettydoc::html_pretty:
+    theme: Cayman
+    highlight: github
+---
+
+# Introduction
+
+Over the past 10 years, house price in the Greater Toronto Area (GTA) has been a major issue. For
+this project, I will build a complex linear model which home buyers can use to predict the sale price of single-family, detached homes across two GTA neighbourhoods. The property-based variables in the dataset are: <p>
+
+| Variable       | Explanation                                      | 
+| -------------- |:------------------------------------------------:| 
+| **Case ID**    | property identification                          |
+| **sale**       | the actual sale price of the property            |
+| **list**       | the last list price of the property              |
+| **bedrooms**   | the total number of bedrooms                     |
+| **bathrooms**  | the number of bathrooms                          |
+| **lotwidth**   | the frontage in feet                             |
+| **lotlength**  | the length in feet of one side of the property   |
+| **maxsqfoot**  | the maximum possible square feet of the property |
+| **taxes**      | previous year's property tax                     |
+| **location**   | X- Neighbourhood X, O-Neighbourhood O            |
+
+<br>
+
+# Data Cleaning and Manipulation
+
+First clean the data by removing the missing values. Create a variable with the name `lotsize` by multiplying `lotwidth` by `lotlength`.
+
+```{r, warning=FALSE, message=FALSE}
+library(dplyr)
+
+reale <- read.csv("reale.csv")
+reale <- na.omit(reale)
+
+reale <- reale %>%
+  mutate(lotsize = lotwidth * lotlength)
+```
+
+<br>
+
+# Pairwise Correlations and Scatterplot Matrix
+
+Produce the pairwise correlations and scatterplot matrix for all pairs of quantitative variables in the
+data. The quantitative variables include sale price, as the response variable and 8 other predictors. Rank all the quantitative predictors for sale price in terms their correlation coefficients, from highest to lowest. <p>
+
+```{r, warning=FALSE, message=FALSE, fig.align='center'}
+library(knitr)
+library(kableExtra)
+
+reale_quant <- reale[, -c(1, 10)]
+corr_table <- round(cor(reale_quant), 4)
+
+kable(corr_table, caption = "Pairwise Correlations") %>%
+  kable_styling(font_size = 12)
+
+pairs(reale_quant, main = "Scatterplot Matrix")
+
+corr_rank <- data.frame(correlation = corr_table[1, -1])
+corr_rank <- corr_rank %>%
+  arrange(desc(correlation))
+
+kable(corr_rank, caption = "Correlations Ranking") %>%
+  kable_styling(font_size = 12)
+```
+
+
+<br>
+
+# Assumption Validation
+
+Based on the scatterplot matrix, variables `bedrooms`, `lotwidth`, `lotlength`, `maxsqfoot`, `lotsize` violated the assumption of constant variance. 
+
+
+
+
+
+
+
+
