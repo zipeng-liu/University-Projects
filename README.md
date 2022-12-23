@@ -1,1 +1,2 @@
-# University-Projects
+# University of Toronto
+## Projects
